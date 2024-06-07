@@ -11,6 +11,10 @@ const booksRouter = require('./Routes/bookRoute');
 app.use('/authors', authorsRouter);
 app.use('/books', booksRouter);
 
+
+document.write(5 + 6);
+
+
 mongoose.connect('mongodb+srv://vk856549:Z6XhVzbXzKxVkojL@books.yh9wi84.mongodb.net/?retryWrites=true&w=majority&appName=Books', { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
