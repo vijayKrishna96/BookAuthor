@@ -32,7 +32,13 @@ const verifyLogin = async(req , res) => {
     }
 }
 
+const logout = async(req , res) =>{
+    res.clearCookie('token')
+    res.send("Logged Out")
+}
+
 module.exports = {
     login,
-    verifyLogin
+    verifyLogin,
+    logout
 }
