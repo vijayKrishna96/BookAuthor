@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.arrivals .arrival-slider .box{
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2rem 1rem;
+    border: var(--border);
+    margin: 1rem 0;
+    margin-top: 3rem;
+}
+
+.arrivals .arrival-slider .box .content .price{
+    font-size: 2rem;
+    color: var(--black);
+    padding-bottom: 0.5rem;
+}
+.arrivals .arrival-slider .box .content .price span{
+    font-size: 1.5rem;
+    color: var(--light-color);
+    text-decoration: line-through;
+}
+.arrivals .arrival-slider .box .content .stars{
+    color: var(--green);
+    font-size: 1.5rem;
+}
+
+.deal{
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('./components/images/Deal.jpg');
+    background-repeat: no-repeat;
+    background-size: cover; 
+    background-position: top ; 
+    height: 50vh;
+}
+.deal .content{
+    margin: 4rem  0 ;
+}
