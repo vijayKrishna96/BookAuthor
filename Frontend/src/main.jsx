@@ -16,7 +16,7 @@ import SignupForm from './components/SignUp/signupForm';
 import LoginForm from './components/Login/loginForm ';
 import Logout from './components/Logout/Logout';
 import Cart from './components/Cart/Cart';
-import WishList from './components/WishList/WishList';
+import WishList from './components/WishList/wishList';
 
 
 const router = createBrowserRouter([
@@ -59,6 +59,7 @@ const router = createBrowserRouter([
         path: '/wishlist',
         element: <WishList />
       }
+      
     ]
   },
 

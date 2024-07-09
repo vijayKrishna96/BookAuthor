@@ -5,13 +5,13 @@ import { Link, useLoaderData } from "react-router-dom";
 import "react-multi-carousel/lib/styles.css";
 import "swiper/css";
 import axios from "axios";
-
 import { FaHeart, FaStar, FaStarHalf } from "react-icons/fa";
 import NewsLetter from "./NewsLetter/newsLetter";
 import Carousel from "./Carousel/Carousel";
 import { useDispatch } from "react-redux";
 import { addItemToCart } from "../features/cart/cartSlice";
-import { addToWishList } from "../features/wishlist/wishList";
+import { addToWishList, removeItems } from "../features/wishList/wishList";
+
 
 export async function loader() {
   try {
@@ -27,24 +27,25 @@ export async function loader() {
 export default function Hero() {
   const Books = useLoaderData();
   const dispatch = useDispatch();
+  const [sortOrder, setSortOrder] = useState("default");
+  const [favorites, setFavorites] = useState([]);
+
+  const toggleFavorite = (bookId) => {
+
+    if (favorites.includes(bookId)) {
+      setFavorites(favorites.filter((id) => id !== bookId));
+      dispatch(removeItems(bookId._id));
+    } else {
+      setFavorites([...favorites, bookId]);
+      dispatch(addToWishList(bookId));
+    }
+  };
 
   const randomizeArray = (array) => {
     return [...array].sort(() => Math.random() - 0.5);
   };
 
   const randomizedBooks = randomizeArray(Books);
-
-  const [sortOrder, setSortOrder] = useState("default");
-  const [favorites, setFavorites] = useState([]);
-
-  // Function to toggle favorite status
-  const toggleFavorite = (bookId) => {
-    if (favorites.includes(bookId)) {
-      setFavorites(favorites.filter(id => id !== bookId));
-    } else {
-      setFavorites([...favorites, bookId]);
-    }
-  };
 
   const sortedBooks = [...Books].sort((a, b) => {
     if (sortOrder === "low-to-high") {
@@ -164,13 +165,16 @@ export default function Hero() {
                       </div>
                     </Link>
 
+                    {/*  */}
+
                     <div className="content">
                       <div className="text-3xl text-indigo-200 absolute bottom-6 left-2/2 transform -translate-x-2/2"
-                      onClick={() => toggleFavorite(book._id)}>
+                       onClick={() => toggleFavorite(book)}
+                       >
                         <FaHeart 
-                            
+                            onClick={() => toggleFavorite(book)} 
                             className={`${
-                              favorites.includes(book._id)
+                              favorites.includes(book)
                                 ? "text-red-500"
                                 : "text-gray-400"
                             }`}
@@ -379,7 +383,9 @@ export default function Hero() {
   );
 }
 
-// 
+
+
+
 
     
 
