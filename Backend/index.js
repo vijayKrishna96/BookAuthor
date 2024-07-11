@@ -5,9 +5,9 @@ const mongoose = require('mongoose')
 const cookieParser = require('cookie-parser')
 
 const bookRoute = require('./Routes/bookRoute')
-const authorRoute = require('./Routes/authorRoute')
 const userRoute = require('./Routes/userRoute')
 const authRoute = require('./Routes/authRoute')
+const categoryRoute = require('./Routes/categoryRoute')
 
 const app = express()
 const port = 3000;
@@ -20,7 +20,7 @@ app.use(express.json())
 app.use(cookieParser())
 
 app.use('/books',bookRoute)
-app.use('/authors',authorRoute)
+app.use('/category',categoryRoute)
 app.use('/users',userRoute)
 app.use('/auth', authRoute)
 
