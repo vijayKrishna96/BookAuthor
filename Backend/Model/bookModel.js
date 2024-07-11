@@ -5,7 +5,11 @@ const bookSchema = new mongoose.Schema({
     price: String,
     description: String,
     image: String,
-    author: String
+    author:String,
+    category: {
+        type: mongoose.ObjectId,
+        ref: 'Category'
+    }
 });
 
 const Book = mongoose.model('Book',bookSchema)
