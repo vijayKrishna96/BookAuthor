@@ -2,17 +2,22 @@ import React, { useEffect } from "react";
 import { useLoaderData } from "react-router-dom";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { FaHeart } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { addItemToCart } from "../../features/cart/cartSlice";
+import ProductCard from "../ProductCard/ProductCard";
+
+import { motion } from "framer-motion";
+import { imageVariant } from "../../variants";
+import { detailsVariant } from "../../variants";
+
 
 export async function loader({ params }) {
   const response = await axios.get(
-    `http://localhost:3000/books/${params.bookId}`
+    `${import.meta.env.VITE_API_URL}/books/${params.bookId}`
   );
   const Book = response.data;
 
-  const response2 = await axios.get("http://localhost:3000/books");
+  const response2 = await axios.get(`${import.meta.env.VITE_API_URL}/books`);
   const Books = response2.data;
   return { Book, Books };
 }
@@ -27,11 +32,16 @@ export default function Product(props) {
 
   return (
     <main>
-      <section className="container mx-auto py-16 ">
+      <section className="container mx-auto py-16 h-[80vh] flex items-center justify-center">
         <div className="max-h-[35rem] grid grid-cols-2 items-center ">
-          <img src={Book.image} alt="" className="h-[35rem]" />
-          <div className="table-row">
+          <motion.img src={Book.image} alt="" className="h-[35rem]" 
+            variants={imageVariant}
+            initial="hidden"
+            animate="visible"
+          />
+          <motion.div className="table-row" variants={detailsVariant} initial="hidden" animate="visible">
             <h2 className="text-4xl font-bold mb-4">{Book.title}</h2>
+            <h3 className="text-2xl font-semibold mb-4">Author ~ <span className="text-xl">{Book.author}</span> </h3>
             <p className="text-grey-600 mb-5">{Book.description}</p>
             <span className="text-2xl block">&#x20B9;{Book.price}</span> <br />
             <Link
@@ -42,11 +52,16 @@ export default function Product(props) {
             >
               Add to cart
             </Link>
-          </div>
+          </motion.div>
         </div>
       </section>
       <section>
-        <div className="container mx-auto max-w-full m-16">
+        <motion.div className="container mx-auto max-w-full m-16"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1, transition: { delay: 0.2, duration: 0.6 } }}
+          exit={{ opacity: 0, transition: { delay: 0.2, duration: 0.6 } }}
+          viewport={{once: false , amount: 0.4}}
+        >
           <div className="heading text-center mb-16 relative">
             <span className="text-5xl p-8 px-8 text-black font-semibold border bg-white">
               Recommended
@@ -54,46 +69,12 @@ export default function Product(props) {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-12">
             {Books.map((book) => (
-              <div
-                key={book.id}
-                className="h-[27rem] w-[20rem] relative overflow-hidden bg-violet-100 rounded-lg shadow-lg p-6 text-center transition-transform duration-400 transform hover:scale-110"
-              >
-                <Link
-                  to={`/product/${book._id}`}
-                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                >
-                  <div className=" cursor-pointer flex flex-col items-center justify-center  overflow-hidden ">
-                    <img
-                      src={book.image}
-                      alt=""
-                      className="h-[15rem] p-4 object-cover"
-                    />
-                    <div className="">
-                      <h3 className="text-lg text-black">{book.title}</h3>
-                      <div className="price text-xl text-black py-1 absolute left-1/2 transform -translate-x-1/2">
-                        &#x20B9; {book.price}
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-                <div className="content ">
-                  <div className="text-3xl text-indigo-200 absolute bottom-6 left-2/2 transform -translate-x-2/2">
-                    <FaHeart />
-                  </div>
-                  <a
-                    onClick={() => {
-                      dispatch(addItemToCart(book));
-                    }}
-                    href="#"
-                    className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md inline-block absolute bottom-6 left-2/2 transform -translate-x-2/2"
-                  >
-                    Add to Cart
-                  </a>
-                </div>
-              </div>
+               <div key={book._id}>
+                <ProductCard book = {book} bookId = {book._id} />
+               </div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </section>
     </main>
   );

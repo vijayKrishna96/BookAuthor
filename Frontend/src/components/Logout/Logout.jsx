@@ -1,6 +1,6 @@
 import React,{ useRef ,useEffect} from 'react'
 import axios from 'axios'
-import { Navigate, useNavigate } from 'react-router-dom'
+import {  useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { changeLoginState } from '../../features/login/loginSlice'
 
@@ -12,12 +12,12 @@ export default function Logout(props) {
     const Navigate = useNavigate()
     
     useEffect(()=>{
-        axios.get('http://localhost:3000/auth/logout',{withCredentials: true})
-    .then(response => {
+        axios.get(`${import.meta.env.VITE_API_URL}/auth/logout`,{withCredentials: true})
+    .then(() => {
         dispatch(changeLoginState(false));
         Navigate('/')
     })
-    .catch(error => {
+    .catch(() => {
         console.log("could not log out")
     })
     },[])

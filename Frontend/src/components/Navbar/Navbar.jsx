@@ -162,9 +162,9 @@ export default function Navbar({ userLoggedIn }) {
             </Link>
             <Link
               className="inline-block px-8 transition duration-500 ease-in-out transform hover:scale-125"
-              to="/blogs"
+              to="/categories"
             >
-              Blogs
+              Categories
             </Link>
             <Link
               className="inline-block px-8 transition duration-500 ease-in-out transform hover:scale-125"
