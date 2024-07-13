@@ -1,21 +1,30 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
 import { Link, useLoaderData } from "react-router-dom";
 import "react-multi-carousel/lib/styles.css";
 import "swiper/css";
 import axios from "axios";
-import { FaHeart, FaStar, FaStarHalf } from "react-icons/fa";
+import {  FaStar, FaStarHalf } from "react-icons/fa";
 import NewsLetter from "./NewsLetter/newsLetter";
 import Carousel from "./Carousel/Carousel";
-import { useDispatch } from "react-redux";
-import { addItemToCart } from "../features/cart/cartSlice";
-import { addToWishList, removeItems } from "../features/wishList/wishList";
+// import { useDispatch } from "react-redux";
+// import { addItemToCart } from "../features/cart/cartSlice";
+// import { addToWishList, removeItems } from "../features/wishList/wishList";
 
+//Motion
+import { motion } from "framer-motion";
+// variants
+import { fadeInRotate, FadeIn } from "../variants";
+import ProductCard from "./ProductCard/ProductCard";
 
 export async function loader() {
   try {
-    const response = await axios.get("http://localhost:3000/books/");
+      const apiUrl = import.meta.env.VITE_API_URL;
+      if (!apiUrl) {
+        throw new Error('API URL is not defined in the environment variables');
+      }
+    const response = await axios.get(`${apiUrl}/books/`);
     const data = response.data;
     return data;
   } catch (error) {
@@ -26,20 +35,9 @@ export async function loader() {
 
 export default function Hero() {
   const Books = useLoaderData();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const [sortOrder, setSortOrder] = useState("default");
-  const [favorites, setFavorites] = useState([]);
-
-  const toggleFavorite = (bookId) => {
-
-    if (favorites.includes(bookId)) {
-      setFavorites(favorites.filter((id) => id !== bookId));
-      dispatch(removeItems(bookId._id));
-    } else {
-      setFavorites([...favorites, bookId]);
-      dispatch(addToWishList(bookId));
-    }
-  };
+  
 
   const randomizeArray = (array) => {
     return [...array].sort(() => Math.random() - 0.5);
@@ -105,14 +103,33 @@ export default function Hero() {
     setSortOrder(event.target.value);
   };
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
   return (
     <>
       <section>
-        <Carousel />
+        <motion.div
+          variants={FadeIn("down", 0.2)}
+          initial="hidden"
+          animate="show"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.8 }}
+        >
+          <Carousel />
+        </motion.div>
       </section>
 
       <section>
-        <div className="popular my-14 container max-w-full">
+        <motion.div
+          className="popular my-14 container max-w-full"
+          variants={FadeIn("up", 0.2)}
+          initial="hidden"
+          animate="show"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.8 }}
+        >
           <div className="heading text-center mb-8 relative">
             <span className="text-3xl sm:text-4xl md:text-5xl  p-8 px-8 text-black font-semibold border bg-white">
               Popular Books
@@ -128,7 +145,9 @@ export default function Hero() {
               <option value="low-to-high"> Low to High</option>
               <option value="high-to-low"> High to Low</option>
             </select>
-            <Link to={"/products"}>
+            <Link to={"/products"}
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            >
               <span className="text-blue-500">View More</span>
             </Link>
           </div>
@@ -147,55 +166,13 @@ export default function Hero() {
               className="popular-slider"
             >
               {sortedBooks.map((book) => (
-                <SwiperSlide key={book._id} className="swiper-slide ">
-                  <div className=" h-[26rem] w-[20rem] my-8 relative overflow-hidden bg-violet-100 rounded-lg shadow-lg p-6 text-center transition-transform duration-400 transform hover:scale-110 ">
-                    <Link to={`/product/${book._id}`}>
-                      <div className="image cursor-pointer flex flex-col items-center justify-center overflow-hidden">
-                        <img
-                          src={book.image}
-                          alt={book.title}
-                          className="h-[15rem] p-4 object-cover"
-                        />
-                        <div className="">
-                          <h3 className="text-md text-black">{book.title}</h3>
-                          <div className="price text-xl text-black py-1 absolute left-1/2 transform -translate-x-1/2">
-                            &#x20B9; {book.price}
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-
-                    {/*  */}
-
-                    <div className="content">
-                      <div className="text-3xl text-indigo-200 absolute bottom-6 left-2/2 transform -translate-x-2/2"
-                       onClick={() => toggleFavorite(book)}
-                       >
-                        <FaHeart 
-                            onClick={() => toggleFavorite(book)} 
-                            className={`${
-                              favorites.includes(book)
-                                ? "text-red-500"
-                                : "text-gray-400"
-                            }`}
-                        />
-                      </div>
-                      <a
-                        onClick={() => {
-                          dispatch(addItemToCart(book));
-                        }}
-                        href="#"
-                        className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-md inline-block absolute bottom-6 left-2/2 transform -translate-x-2/2"
-                      >
-                        Add to Cart
-                      </a>
-                    </div>
-                  </div>
+                <SwiperSlide key= {book._id} className="swiper-slide ">
+                   <ProductCard  book = {book} bookId={book._id}/>
                 </SwiperSlide>
               ))}
             </Swiper>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       <section>
@@ -205,105 +182,118 @@ export default function Hero() {
       {/* arrivals section */}
 
       <section className="arrivals container max-w-full">
-        <div className="heading text-center mb-8 relative">
-          <span className="text-3xl sm:text-4xl md:text-5xl p-8 px-8 text-black font-semibold border bg-white">
-            New arrivals
-          </span>
-        </div>
-        <div className="swiper ">
-          <Swiper
-            watchSlidesProgress={true}
-            autoplay={{
-              delay: 3500,
-              disableOnInteraction: false,
-            }}
-            modules={[Autoplay]}
-            className="arrival-slider"
-            {...swiperOptionsThree}
-          >
-            {Books.map((book) => (
-              <SwiperSlide key={book._id} className="">
-                <a
-                  href="\#"
-                  className="box h-60 w-[30rem] shadow-md transition-transform duration-400 transform hover:scale-110 m-2"
-                >
-                  <div className="image h-56 w-48">
-                    <img className="h-full w-full" src={book.image} alt="" />
-                  </div>
-                  <div className="content">
-                    <span className="text-xl">{book.title}</span>
-                    <div className="text-xl mt-2">&#x20B9;{book.price}</div>
-                    <div className="stars flex mt-4">
-                      <i className="text-xl text-green-500">
-                        <FaStar />
-                      </i>
-                      <i className="text-xl text-green-500">
-                        <FaStar />
-                      </i>
-                      <i className="text-xl text-green-500">
-                        <FaStar />
-                      </i>
-                      <i className="text-xl text-green-500">
-                        <FaStar />
-                      </i>
-                      <i className="text-xl text-green-500">
-                        <FaStarHalf />
-                      </i>
+        <motion.div
+          variants={fadeInRotate(0.2)}
+          initial="hidden"
+          whileInView={"show"}
+          viewport={{ once: true, amount: 0.4 }}
+        >
+          <div className="heading text-center mb-8 relative">
+            <span className="text-3xl sm:text-4xl md:text-5xl p-8 px-8 text-black font-semibold border bg-white">
+              New arrivals
+            </span>
+          </div>
+          <div className="swiper ">
+            <Swiper
+              watchSlidesProgress={true}
+              autoplay={{
+                delay: 3500,
+                disableOnInteraction: false,
+              }}
+              modules={[Autoplay]}
+              className="arrival-slider"
+              {...swiperOptionsThree}
+            >
+              {Books.map((book) => (
+                <SwiperSlide key={book._id} className="">
+                  <a
+                    href="\#"
+                    className="box h-60 w-[30rem] shadow-md transition-transform duration-400 transform hover:scale-110 m-2"
+                  >
+                    <div className="image h-56 w-48">
+                      <img className="h-full w-full" src={book.image} alt="" />
                     </div>
-                  </div>
-                </a>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+                    <div className="content">
+                      <span className="text-xl">{book.title}</span>
+                      <div className="text-xl mt-2">&#x20B9;{book.price}</div>
+                      <div className="stars flex mt-4">
+                        <i className="text-xl text-green-500">
+                          <FaStar />
+                        </i>
+                        <i className="text-xl text-green-500">
+                          <FaStar />
+                        </i>
+                        <i className="text-xl text-green-500">
+                          <FaStar />
+                        </i>
+                        <i className="text-xl text-green-500">
+                          <FaStar />
+                        </i>
+                        <i className="text-xl text-green-500">
+                          <FaStarHalf />
+                        </i>
+                      </div>
+                    </div>
+                  </a>
+                </SwiperSlide>
+              ))}
+            </Swiper>
 
-          <Swiper
-            watchSlidesProgress={true}
-            autoplay={{
-              delay: 3500,
-              disableOnInteraction: false,
-            }}
-            modules={[Autoplay]}
-            className="arrival-slider"
-            {...swiperOptionsThree}
-          >
-            {randomizedBooks.map((book) => (
-              <SwiperSlide key={book._id} className="">
-                <a
-                  href="#arrival"
-                  className="box h-60 w-[30rem] shadow-md transition-transform duration-400 transform hover:scale-110 m-2"
-                >
-                  <div className="image h-56 w-48">
-                    <img className="h-full w-full" src={book.image} alt="" />
-                  </div>
-                  <div className="content">
-                    <span className="text-xl">{book.title}</span>
-                    <div className="text-xl mt-2">&#x20B9;{book.price}</div>
-                    <div className="stars flex ">
-                      <i className="text-xl text-green-500">
-                        <FaStar />
-                      </i>
-                      <i className="text-xl text-green-500">
-                        <FaStar />
-                      </i>
-                      <i className="text-xl text-green-500">
-                        <FaStar />
-                      </i>
-                      <i className="text-xl text-green-500">
-                        <FaStar />
-                      </i>
-                      <i className="text-xl text-green-500">
-                        <FaStarHalf />
-                      </i>
+            <Swiper
+              watchSlidesProgress={true}
+              autoplay={{
+                delay: 3500,
+                disableOnInteraction: false,
+              }}
+              modules={[Autoplay]}
+              className="arrival-slider"
+              {...swiperOptionsThree}
+            >
+              {randomizedBooks.map((book) => (
+                <SwiperSlide key={book._id} className="">
+                  <a
+                    href="#arrival"
+                    className="box h-60 w-[30rem] shadow-md transition-transform duration-400 transform hover:scale-110 m-2"
+                  >
+                    <div className="image h-56 w-48">
+                      <img className="h-full w-full" src={book.image} alt="" />
                     </div>
-                  </div>
-                </a>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
+                    <div className="content">
+                      <span className="text-xl">{book.title}</span>
+                      <div className="text-xl mt-2">&#x20B9;{book.price}</div>
+                      <div className="stars flex ">
+                        <i className="text-xl text-green-500">
+                          <FaStar />
+                        </i>
+                        <i className="text-xl text-green-500">
+                          <FaStar />
+                        </i>
+                        <i className="text-xl text-green-500">
+                          <FaStar />
+                        </i>
+                        <i className="text-xl text-green-500">
+                          <FaStar />
+                        </i>
+                        <i className="text-xl text-green-500">
+                          <FaStarHalf />
+                        </i>
+                      </div>
+                    </div>
+                  </a>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+        </motion.div>
       </section>
 
       <section className="deal mt-8">
+        <motion.div
+          variants={FadeIn("up", 0.2)}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.8 }}
+        >
         <div className="container max-w-full content inline-block items-center">
           <h3 className="text-3xl sm:text-5xl text-white">Exiting offers on</h3>
           <h1 className="text-4xl sm:text-7xl text-white">Fiction</h1>
@@ -321,6 +311,7 @@ export default function Hero() {
             Shop now
           </a>
         </div>
+        </motion.div>
       </section>
 
       <section className="reviews container max-w-full mt-5">
@@ -329,7 +320,12 @@ export default function Hero() {
             client&apos;s reviews
           </span>
         </div>
-        <div className="swiper">
+        <motion.div className="swiper"
+          variants={FadeIn("up", 0.2)}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.8 }}
+        >
           <Swiper
             watchSlidesProgress={true}
             autoplay={{
@@ -377,17 +373,8 @@ export default function Hero() {
               </SwiperSlide>
             ))}
           </Swiper>
-        </div>
+        </motion.div>
       </section>
     </>
   );
 }
-
-
-
-
-
-    
-
-
-

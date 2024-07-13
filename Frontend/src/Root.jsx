@@ -6,13 +6,18 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { changeLoginState } from "./features/login/loginSlice";
 
+//Motion
+import { motion } from "framer-motion";
+// variants
+import { FadeIn } from "./variants";
+
 export default function Root() {
 
   const userLoggedIn = useSelector(state => state.login.userLoggedIn)
   const dispatch = useDispatch()
 
   useEffect(()=>{
-    axios.get('http://localhost:3000/auth/verify',{withCredentials: true})
+    axios.get(`${import.meta.env.VITE_API_URL}/auth/verify`,{withCredentials: true})
     .then(response => {
         dispatch(changeLoginState(true))
     })
@@ -24,7 +29,16 @@ export default function Root() {
   return (
     <main>
       <header>
-        <Navbar userLoggedIn={userLoggedIn} />
+        <motion.div
+        variants={FadeIn("down",0.2)}
+        initial="hidden"
+        animate="show"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.8 }}
+        >
+          <Navbar userLoggedIn={userLoggedIn} />
+        </motion.div>
+        
       </header>
       <Outlet />
       <footer>
