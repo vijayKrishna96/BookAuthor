@@ -20,7 +20,7 @@ export default function WishList(props) {
   console.log(items);
 
   return (
-    <main className="container max-w-full mx-auto">
+    <main className="container max-w-full mx-auto h-[90vh]">
       <div className="p-6">
         <h2 className="text-2xl font-bold mb-4">
           My Wishlist <span className="font-normal"></span>
@@ -43,7 +43,7 @@ export default function WishList(props) {
               <div className="item-info mb-4">
                 <p className="text-lg font-semibold">{truncateText(item.title, 16)}</p>
                 <p className="text-xl font-bold text-black">
-                  {item.price}{" "}
+                &#x20B9;{item.price}{" "}
                   <span className="line-through text-gray-500">
                     {item.originalPrice}
                   </span>
