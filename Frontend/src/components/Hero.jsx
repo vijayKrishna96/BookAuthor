@@ -8,9 +8,7 @@ import axios from "axios";
 import {  FaStar, FaStarHalf } from "react-icons/fa";
 import NewsLetter from "./NewsLetter/newsLetter";
 import Carousel from "./Carousel/Carousel";
-// import { useDispatch } from "react-redux";
-// import { addItemToCart } from "../features/cart/cartSlice";
-// import { addToWishList, removeItems } from "../features/wishList/wishList";
+
 
 //Motion
 import { motion } from "framer-motion";
