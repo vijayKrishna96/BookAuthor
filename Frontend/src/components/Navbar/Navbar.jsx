@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Modal from "./Modal";
 import SignupForm from "../SignUp/signupForm";
-import LoginForm from "../Login/loginForm ";
+import LoginForm from "../Login/loginForm";
 
 export default function Navbar({ userLoggedIn }) {
   const [isOpen, setIsOpen] = useState(false);
