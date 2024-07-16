@@ -17,6 +17,8 @@ import LoginForm from './components/Login/loginForm ';
 import Logout from './components/Logout/Logout';
 import Cart from './components/Cart/Cart';
 import WishList from './components/WishList/wishList';
+import Categories ,{loader as categoriesLoader} from './components/Categories/Categories';
+import CategoryPage,{loader as categoryPageLoader} from './components/Categories/CategoryPage';
 
 
 const router = createBrowserRouter([
@@ -58,6 +60,16 @@ const router = createBrowserRouter([
       {
         path: '/wishlist',
         element: <WishList />
+      },
+      {
+        path: '/categories',
+        element: <Categories />,
+        loader: categoriesLoader
+      },
+      {
+        path: '/category/:categoryId',
+        element: <CategoryPage />,
+        loader: categoryPageLoader
       }
       
     ]
